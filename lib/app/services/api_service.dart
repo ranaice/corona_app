@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:corona_app/app/models/endpoint_data.dart';
 import 'package:corona_app/app/services/api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class APIService {
     throw response;
   }
 
-  Future<int> getEndpointData({@required String accessToken, @required Endpoint endpoint}) async {
+  Future<EndpointData> getEndpointData({@required String accessToken, @required Endpoint endpoint}) async {
     final uri = api.endpointUri(endpoint);
     final response = await http.get(uri.toString(), headers: {'Authorization': 'Bearer $accessToken'});
 
@@ -35,8 +36,9 @@ class APIService {
       final List<dynamic> data = jsonDecode(response.body);
       if (data.isNotEmpty) {
         final finalResult = data[0]['data'];
+        final DateTime date = DateTime.tryParse(data[0]['date']);
         if (finalResult != null) {
-          return finalResult;
+          return EndpointData(value: finalResult, date: date);
         }
       }
     }

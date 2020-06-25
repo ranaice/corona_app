@@ -1,8 +1,11 @@
+import 'package:corona_app/app/models/endpoint_data.dart';
 import 'package:corona_app/app/models/endpoints_model.dart';
 import 'package:corona_app/app/repositories/data_repository.dart';
 import 'package:corona_app/app/services/api.dart';
 import 'package:corona_app/ui/endpoint_card.dart';
+import 'package:corona_app/ui/widgets/last_updated_status_text.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
@@ -31,6 +34,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final formatter = LastUpdatedDateFormatter(lastUpdated: _cases != null ? _cases.values[Endpoint.cases].date : null);
     return Scaffold(
       appBar: AppBar(
         title: Text('Corona App'),
@@ -39,10 +43,13 @@ class _DashboardState extends State<Dashboard> {
         onRefresh: _fetchData,
         child: ListView(
           children: <Widget>[
+            LastUpdatedStatusText(
+              text: formatter.lastUpdatedStatusText(),
+            ),
             for (var endpoint in Endpoint.values)
               EndpointCard(
                 endpoint: endpoint,
-                value: _cases != null ? _cases.values[endpoint] : null,
+                value: _cases != null ? _cases.values[endpoint].value : null,
               ),
           ],
         ),
