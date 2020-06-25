@@ -17,12 +17,12 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  EndpointsModel _cases;
-  bool _isLoading = false;
+  EndpointsModel _endpointsData;
 
   @override
   void initState() {
     super.initState();
+    _endpointsData = Provider.of<DataRepository>(context, listen: false).getAllEndpointsCachedData();
     _fetchData();
   }
 
@@ -33,10 +33,9 @@ class _DashboardState extends State<Dashboard> {
     // Parsing Errors (missing/incorrect data in API Response)
     final dataRepository = Provider.of<DataRepository>(context, listen: false);
     try {
-      _isLoading = true;
       final cases = await dataRepository.getAllEndpointsData();
       setState(() {
-        _cases = cases;
+        _endpointsData = cases;
       });
     } on SocketException catch (_) {
       showAlertDialog(
@@ -53,39 +52,32 @@ class _DashboardState extends State<Dashboard> {
           title: 'Unknown Error',
           content: 'Please contact support or try again later',
           defaultActionText: 'OK');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final formatter = LastUpdatedDateFormatter(lastUpdated: _cases != null ? _cases.values[Endpoint.cases].date : null);
+    final formatter = LastUpdatedDateFormatter(
+        lastUpdated: _endpointsData != null ? _endpointsData.values[Endpoint.cases]?.date : null);
     return Scaffold(
       appBar: AppBar(
         title: Text('Corona App'),
       ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : RefreshIndicator(
-              onRefresh: _fetchData,
-              child: ListView(
-                children: <Widget>[
-                  LastUpdatedStatusText(
-                    text: formatter.lastUpdatedStatusText(),
-                  ),
-                  for (var endpoint in Endpoint.values)
-                    EndpointCard(
-                      endpoint: endpoint,
-                      value: _cases != null ? _cases.values[endpoint].value : null,
-                    ),
-                ],
-              ),
+      body: RefreshIndicator(
+        onRefresh: _fetchData,
+        child: ListView(
+          children: <Widget>[
+            LastUpdatedStatusText(
+              text: formatter.lastUpdatedStatusText(),
             ),
+            for (var endpoint in Endpoint.values)
+              EndpointCard(
+                endpoint: endpoint,
+                value: _endpointsData != null ? _endpointsData.values[endpoint]?.value : null,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
