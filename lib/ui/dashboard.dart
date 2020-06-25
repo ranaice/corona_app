@@ -1,3 +1,4 @@
+import 'package:corona_app/app/models/endpoints_model.dart';
 import 'package:corona_app/app/repositories/data_repository.dart';
 import 'package:corona_app/app/services/api.dart';
 import 'package:corona_app/ui/endpoint_card.dart';
@@ -12,7 +13,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int _cases;
+  EndpointsModel _cases;
 
   @override
   void initState() {
@@ -22,7 +23,7 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _fetchData() async {
     final dataRepository = Provider.of<DataRepository>(context, listen: false);
-    final cases = await dataRepository.getEndpointData(Endpoint.cases);
+    final cases = await dataRepository.getAllEndpointsData();
     setState(() {
       _cases = cases;
     });
@@ -38,10 +39,11 @@ class _DashboardState extends State<Dashboard> {
         onRefresh: _fetchData,
         child: ListView(
           children: <Widget>[
-            EndpointCard(
-              color: Colors.green,
-              value: _cases,
-            ),
+            for (var endpoint in Endpoint.values)
+              EndpointCard(
+                endpoint: endpoint,
+                value: _cases != null ? _cases.values[endpoint] : null,
+              ),
           ],
         ),
       ),
