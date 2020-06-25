@@ -1,7 +1,7 @@
 import 'package:corona_app/app/repositories/data_repository.dart';
 import 'package:corona_app/app/services/api.dart';
 import 'package:corona_app/app/services/api_service.dart';
-import 'package:corona_app/ui/dashboard.dart';
+import 'package:corona_app/app/ui/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

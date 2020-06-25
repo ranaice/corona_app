@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:corona_app/app/models/endpoints_model.dart';
 import 'package:corona_app/app/repositories/data_repository.dart';
 import 'package:corona_app/app/services/api.dart';
-import 'package:corona_app/ui/show_alert_dialog.dart';
-import 'package:corona_app/ui/widgets/endpoint_card.dart';
-import 'package:corona_app/ui/widgets/last_updated_status_text.dart';
+import 'package:corona_app/app/ui/show_alert_dialog.dart';
+import 'package:corona_app/app/ui/widgets/endpoint_card.dart';
+import 'package:corona_app/app/ui/widgets/last_updated_status_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
